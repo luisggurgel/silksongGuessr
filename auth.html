@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="src/styles/index.css">
+    <link rel="stylesheet" href="src/styles/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Silksong Guessr</title>
+    <style>
+        .auth-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: white;
+            z-index: 10;
+            position: relative;
+        }
+
+        .auth-box {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid #fff;
+            width: 300px;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #222;
+            border: 1px solid #555;
+            color: white;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            background: #357abd;
+        }
+
+        .toggle-link {
+            display: block;
+            margin-top: 15px;
+            color: #ccc;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        // Global wrapper to fix race condition/module scoping issues
+        function handleCredentialResponse(response) {
+            if (window.handleGoogleLoginLogic) {
+                window.handleGoogleLoginLogic(response);
+            } else {
+                console.error("Google Login logic not loaded yet.");
+                alert("Please wait a moment for the page to fully load and try again.");
+            }
+        }
+    </script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+
+<body>
+    <div class="background-container"></div> <!-- Should match existing bg -->
+
+    <div class="auth-container">
+        <div class="auth-box" id="login-box">
+            <h2>Login</h2>
+            <input type="text" id="login-input" placeholder="Email or Username">
+            <input type="password" id="login-password" placeholder="Password">
+            <button onclick="handleLogin()">Login</button>
+
+            <div id="g_id_onload"
+                data-client_id="390966559256-fjuk1ilgk6jmel31l1ul9v6qu8l7odai.apps.googleusercontent.com"
+                data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse"
+                data-auto_prompt="false">
+            </div>
+
+            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_blue"
+                data-text="signin_with" data-size="large" data-logo_alignment="left"
+                style="margin-top: 10px; width: 100%;">
+            </div>
+
+            <span class="toggle-link" onclick="toggleAuth()">Need an account? Register</span>
+            <br>
+            <a href="index.html" style="color: grey; font-size: 0.8rem;">Back to Menu</a>
+        </div>
+
+        <div class="auth-box" id="register-box" style="display: none;">
+            <h2>Register</h2>
+            <input type="text" id="reg-username" placeholder="Username">
+            <input type="email" id="reg-email" placeholder="Email">
+            <input type="password" id="reg-password" placeholder="Password">
+            <input type="password" id="reg-confirm-password" placeholder="Confirm Password">
+            <button onclick="handleRegister()">Register</button>
+
+            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_blue"
+                data-text="signup_with" data-size="large" data-logo_alignment="left"
+                style="margin-top: 10px; width: 100%;">
+            </div>
+
+            <span class="toggle-link" onclick="toggleAuth()">Have an account? Login</span>
+            <br>
+            <a href="index.html" style="color: grey; font-size: 0.8rem;">Back to Menu</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth } from './src/js/api.js';
+
+        window.toggleAuth = () => {
+            const loginBox = document.getElementById('login-box');
+            const registerBox = document.getElementById('register-box');
+            if (loginBox.style.display === 'none') {
+                loginBox.style.display = 'block';
+                registerBox.style.display = 'none';
+            } else {
+                loginBox.style.display = 'none';
+                registerBox.style.display = 'block';
+            }
+        };
+
+        // Check for ?mode=register
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('mode') === 'register') {
+            window.toggleAuth(); // Switch to register view
+        }
+
+        window.handleGoogleLoginLogic = async (response) => {
+            try {
+                // alert('Received Google Credential. Logging in...');
+                const res = await auth.googleLogin(response.credential);
+                // alert('Backend Response: ' + JSON.stringify(res));
+
+                if (res.ok) {
+                    if (res.data.isNewUser === false) {
+                        alert('User already exists, logging in');
+                    } else {
+                        // alert('Login Success! Token: ' + (res.data.token ? 'Yes' : 'No') + ', User: ' + (res.data.user ? res.data.user.username : 'No'));
+                    }
+                    sessionStorage.setItem('justLoggedIn', 'true');
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Google Login failed: ' + (res.data?.msg || 'Unknown error') + '\nDetails: ' + (res.data?.error || ''));
+                }
+            } catch (error) {
+                console.error('Google Auth Error:', error);
+                alert('An error occurred during Google Login: ' + error.message);
+            }
+        };
+
+        window.handleLogin = async () => {
+            const loginInput = document.getElementById('login-input').value;
+            const password = document.getElementById('login-password').value;
+            const res = await auth.login(loginInput, password);
+            if (res.ok) {
+                sessionStorage.setItem('justLoggedIn', 'true');
+                window.location.href = 'index.html';
+            } else {
+                alert(res.data.msg || 'Login failed');
+            }
+        };
+
+        window.handleRegister = async () => {
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match.');
+                return;
+            }
+
+            const res = await auth.register(username, email, password);
+            if (res.ok) {
+                sessionStorage.setItem('justLoggedIn', 'true');
+                window.location.href = 'index.html';
+            } else {
+                alert(res.data.msg || 'Registration failed');
+            }
+        };
+    </script>
+</body>
+
+</html>

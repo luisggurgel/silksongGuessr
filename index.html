@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" href="src/styles/index.css" />
+	<link rel="stylesheet" href="src/styles/style.css" />
+	<!--SEO Junk-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<link rel="shortcut icon" href="/assets/icons/favicon.png" type="image/x-icon" />
+	<title>Silksong Guessr</title>
+	<meta name="description"
+		content="Test your knowledge of Hallownest in Hollow Guessr, a Hollow Knight-inspired GeoGuessr game." />
+	<meta name="keywords" content="Hollow Knight, GeoGuessr, Hollow Guessr, Hallownest, indie games, guessing game" />
+	<meta name="author" content="Logboy2000" />
+	<meta property="og:title" content="Hollow Guessr - A Hollow Knight GeoGuessing Game" />
+	<meta property="og:description"
+		content="Test your knowledge of Hallownest and Pharloom in this interactive guessing game. Can you recognize every location in Hollow Knight?" />
+	<meta property="og:image" content="/images/social-preview.png" />
+	<meta property="og:url" content="https://hollowguessr.pages.dev/" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="Hollow Guessr - A Hollow Knight GeoGuessing Game" />
+	<meta name="twitter:description"
+		content="Guess the locations in Hallownest with Hollow Guessr, a fan-made Hollow Knight GeoGuessr clone." />
+	<meta name="twitter:image" content="/images/social-preview.png" />
+	<!--End of SEO Junk-->
+
+	<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-database-compat.js"></script>
+
+</head>
+
+<body>
+	<img src="/images/logo.png" alt="Silksong Guessr logo - A Hollow Knight GeoGuessing Game" id="title-image"
+		class="moving" />
+	<p id="magicText"></p>
+	<br>
+	<div class="button-container moving">
+		<a class="hk-button" href="game.html?mode=play">
+			Play
+		</a>
+		<a class="hk-button" href="game.html">
+			Settings
+		</a>
+		<a class="hk-button" href="credits.html">
+			Credits
+		</a>
+	</div>
+
+	<div id="footer-info">
+		<span>v1.0</span>
+		<span>A game by
+			<a href="https://github.com/luisggurgel" target="_blank" rel="noopener noreferrer"
+				style="text-decoration: underline;">luisggurgel</a></span>
+	</div>
+
+	<!-- Profile Icon & Dropdown (Top Right) -->
+	<div id="profile-container" style="position: absolute; top: 20px; right: 20px; z-index: 100;">
+		<!-- Icon -->
+		<div id="profile-icon" onclick="handleProfileClick()" style="width: 40px; height: 40px; cursor: pointer;">
+			<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path
+					d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z"
+					stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+				<path d="M20 21C20 16.5817 16.4183 13 12 13C7.58172 13 4 16.5817 4 21" stroke="white" stroke-width="2"
+					stroke-linecap="round" stroke-linejoin="round" />
+			</svg>
+		</div>
+
+		<!-- Dropdown Menu -->
+		<div id="profile-dropdown"
+			style="display: none; position: absolute; top: 50px; right: 0; background: rgba(0, 0, 0, 0.9); border: 1px solid #fff; border-radius: 8px; width: 150px; padding: 10px; flex-direction: column; gap: 10px;">
+			<!-- Injected by JS based on auth state -->
+		</div>
+	</div>
+
+	<!-- Main script entry point -->
+	<script type="module" src="/src/js/main.js"></script>
+	<script type="module">
+		import { auth } from './src/js/api.js';
+
+		window.handleProfileClick = () => {
+			if (auth.isAuthenticated()) {
+				window.location.href = 'profile.html';
+			} else {
+				toggleDropdown();
+			}
+		};
+
+		window.toggleDropdown = () => {
+			const dropdown = document.getElementById('profile-dropdown');
+			if (dropdown.style.display === 'none') {
+				dropdown.style.display = 'flex';
+			} else {
+				dropdown.style.display = 'none';
+			}
+		};
+
+		// Close dropdown when clicking outside
+		document.addEventListener('click', (e) => {
+			const container = document.getElementById('profile-container');
+			if (!container.contains(e.target)) {
+				document.getElementById('profile-dropdown').style.display = 'none';
+			}
+		});
+
+		window.handleLogout = () => {
+			auth.logout();
+			window.location.reload();
+		};
+
+		const dropdown = document.getElementById('profile-dropdown');
+		const magicText = document.getElementById('magicText');
+
+		console.log('Index Check - Token:', localStorage.getItem('token'));
+		console.log('Index Check - IsAuthenticated:', auth.isAuthenticated());
+
+		if (auth.isAuthenticated()) {
+			const user = auth.getUser();
+			// Check for welcome back message flag
+			if (sessionStorage.getItem('justLoggedIn')) {
+				magicText.innerText = `Welcome back, ${user.username}!`;
+				sessionStorage.removeItem('justLoggedIn');
+			}
+			// Authenticated: No Dropdown Content needed as we redirect, but keeping it empty or minimal
+			dropdown.innerHTML = '';
+		} else {
+			// Render Unauthenticated Menu
+			dropdown.innerHTML = `
+				<a href="auth.html" class="hk-button" style="font-size: 0.9rem; padding: 5px; display: block; text-align: center;">Login</a>
+				<a href="auth.html?mode=register" class="hk-button" style="font-size: 0.9rem; padding: 5px; display: block; text-align: center; margin-top: 5px;">Register</a>
+			`;
+		}
+	</script>
+</body>
+
+</html>

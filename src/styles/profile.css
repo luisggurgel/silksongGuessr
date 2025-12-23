@@ -1,0 +1,368 @@
+/* Profile Page Styles specific to HKGuessr */
+
+/* Ensure body can scroll on profile page */
+body {
+    overflow-y: auto !important;
+    min-height: 100vh;
+}
+
+:root {
+    --bg-color: #000000;
+    --main-color: #ffffff;
+    --sub-color: #818181;
+    --sub-alt-color: #111111;
+    --text-color: #eee;
+    --highlight-color: #4a90e2;
+    --roundness: 8px;
+    --gap: 1.5rem;
+}
+
+.profile-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 2rem;
+    color: var(--text-color);
+    box-sizing: border-box;
+    /* Ensure padding doesn't cause horizontal overflow */
+}
+
+/* Use Flexbox for vertical stacking */
+.profile-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    width: 100%;
+    max-width: 1000px;
+    background: transparent;
+    padding-bottom: 2rem;
+    /* Add bottom padding for scrolling space */
+}
+
+/* Header Section */
+.profile-header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem;
+    background: var(--sub-alt-color);
+    padding: 2rem;
+    border-radius: var(--roundness);
+    border: 1px solid #333;
+    align-items: center;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    background: #222;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    color: var(--sub-color);
+}
+
+.profile-info h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--main-color);
+}
+
+.profile-info .joined {
+    color: var(--sub-color);
+    font-size: 0.9rem;
+}
+
+.header-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+}
+
+.profile-btn {
+    background: transparent;
+    border: 1px solid var(--sub-color);
+    color: var(--sub-color);
+    padding: 5px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    text-decoration: none;
+    font-size: 0.8rem;
+}
+
+.profile-btn:hover {
+    color: var(--bg-color);
+    background: var(--main-color);
+    border-color: var(--main-color);
+}
+
+/* Global Stats Summary */
+.profile-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    background: var(--sub-alt-color);
+    padding: 1.5rem;
+    border-radius: var(--roundness);
+    border: 1px solid #333;
+}
+
+.stat-box {
+    text-align: center;
+}
+
+.stat-box .label {
+    color: var(--sub-color);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-box .value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--main-color);
+}
+
+/* Difficulty Sections */
+.difficulty-section {
+    width: 100%;
+}
+
+.difficulty-header {
+    color: var(--text-color);
+    font-size: 1.8rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 0.5rem;
+}
+
+.modes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    width: 100%;
+}
+
+.mode-card {
+    background: var(--sub-alt-color);
+    padding: 1.5rem;
+    border-radius: var(--roundness);
+    border: 1px solid #333;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.mode-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--sub-color);
+}
+
+.mode-card h3 {
+    color: var(--sub-color);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    border-bottom: 1px solid #222;
+    padding-bottom: 0.5rem;
+}
+
+.mode-stat {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.mode-stat .s-label {
+    color: var(--sub-color);
+}
+
+.mode-stat .s-value {
+    color: var(--main-color);
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .header-actions {
+        margin-left: 0;
+        margin-top: 1rem;
+    }
+
+    .profile-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Heatmap Styles */
+.heatmap-container {
+    width: 100%;
+    /* Adjusted for labels */
+    max-width: 100%;
+    margin: 30px auto;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 20px;
+    background-color: var(--sub-alt-color);
+    /* GitHub Dark bg */
+    display: flex;
+    flex-direction: column;
+}
+
+.heatmap-header {
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.heatmap-title {
+    font-size: 16px;
+    color: #e6edf3;
+}
+
+.heatmap-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.heatmap-day-labels {
+    display: flex;
+    flex-direction: column;
+    /* 
+       Grid: 15px square + 4px gap = 19px pitch.
+       Sun (row 0)
+       Mon (row 1) -> Top: 19px
+       Tue (row 2)
+       Wed (row 3) -> Top: 19px * 3 = 57px
+       Thu (row 4)
+       Fri (row 5) -> Top: 19px * 5 = 95px
+       Sat (row 6)
+       
+       Label height = 15px.
+       Gap required: (Pitch * 2) - Label Height
+       (19*2) - 15 = 38 - 15 = 23px.
+    */
+    padding-top: 19px;
+    gap: 23px;
+}
+
+.heatmap-day-labels span {
+    font-size: 10px;
+    color: #7d8590;
+    line-height: 15px;
+    height: 15px;
+    /* match square height */
+}
+
+.heatmap-scroll {
+    overflow-x: auto;
+}
+
+.heatmap-grid {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    width: max-content;
+}
+
+.heatmap-week {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.heatmap-square {
+    width: 15px;
+    height: 15px;
+    background-color: #161b22;
+    border-radius: 2px;
+    outline: 1px solid rgba(27, 31, 35, 0.06);
+    outline-offset: -1px;
+}
+
+/* Dark Grey to White Theme */
+.heatmap-square.level-0 {
+    background-color: #161b22;
+}
+
+.heatmap-square.level-1 {
+    background-color: #454c59;
+}
+
+.heatmap-square.level-2 {
+    background-color: #7d8590;
+}
+
+.heatmap-square.level-3 {
+    background-color: #b6bdc4;
+}
+
+.heatmap-square.level-4 {
+    background-color: #ffffff;
+}
+
+.heatmap-footer {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #7d8590;
+}
+
+.heatmap-footer a {
+    color: #58a6ff;
+    text-decoration: none;
+}
+
+.heatmap-legend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.legend-square {
+    width: 15px;
+    height: 15px;
+    border-radius: 2px;
+}
+
+.legend-square.level-0 {
+    background-color: #161b22;
+}
+
+.legend-square.level-1 {
+    background-color: #454c59;
+}
+
+.legend-square.level-2 {
+    background-color: #7d8590;
+}
+
+.legend-square.level-3 {
+    background-color: #b6bdc4;
+}
+
+.legend-square.level-4 {
+    background-color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .heatmap-container {
+        padding: 10px;
+        width: 100%;
+    }
+}

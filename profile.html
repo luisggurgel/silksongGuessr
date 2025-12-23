@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="src/styles/index.css">
+    <link rel="stylesheet" href="src/styles/style.css">
+    <link rel="stylesheet" href="src/styles/profile.css"> <!-- New CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Silksong Guessr</title>
+</head>
+
+<body>
+    <div class="background-container"></div>
+
+    <!-- Use explicit back button logic inside the script or a simple anchor -->
+    <div id="backContainer">
+        <button id="back-button" onclick="window.location.href='index.html'">
+            <img src="/images/leftArrow.png" alt="Back"
+                style="height: 1em; vertical-align: middle; margin-right: 5px; filter: invert(1);">
+            Back
+        </button>
+    </div>
+
+    <div class="profile-container">
+        <div id="loading" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+            <h1>Loading Profile...</h1>
+        </div>
+
+        <div class="profile-content" id="profile-content" style="display: none;">
+
+            <!-- User Header -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <!-- Placeholder Icon -->
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+                        <path
+                            d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" />
+                        <path d="M20 21C20 16.5817 16.4183 13 12 13C7.58172 13 4 16.5817 4 21" />
+                    </svg>
+                </div>
+                <div class="profile-info">
+                    <h1 id="username-display">Username</h1>
+                    <div class="joined">Playing since <span id="join-date">2024</span></div>
+                </div>
+                <div class="header-actions">
+                    <button class="profile-btn" onclick="handleLogout()">Logout</button>
+                </div>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="profile-summary">
+                <div class="stat-box">
+                    <div class="label">games played</div>
+                    <div class="value" id="total-games">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">total score</div>
+                    <div class="value" id="total-score">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">time playing</div>
+                    <!-- Keeping naming similar to Monkeytype, though it's time played -->
+                    <div class="value" id="total-time">0s</div>
+                </div>
+            </div>
+
+            <!-- Difficulty Sections -->
+            <div id="attuned-section" class="difficulty-section">
+                <h2 class="difficulty-header">Attuned</h2>
+                <div id="attuned" class="modes-grid"></div>
+            </div>
+
+            <div id="ascended-section" class="difficulty-section">
+                <h2 class="difficulty-header">Ascended</h2>
+                <div id="ascended" class="modes-grid"></div>
+            </div>
+
+            <div id="radiant-section" class="difficulty-section">
+                <h2 class="difficulty-header">Radiant</h2>
+                <div id="radiant" class="modes-grid"></div>
+            </div>
+
+            <!-- Activity Heatmap (Moved to bottom) -->
+            <div class="heatmap-container">
+                <div class="heatmap-header">
+                    <span class="heatmap-title" id="heatmap-total-tests">0 tests in the last year</span>
+                </div>
+                <!-- Body with Labels + Scrollable Grid -->
+                <div class="heatmap-body">
+                    <div class="heatmap-day-labels">
+                        <span>Mon</span>
+                        <span>Wed</span>
+                        <span>Fri</span>
+                    </div>
+                    <div class="heatmap-scroll">
+                        <div class="heatmap-grid" id="heatmap-grid">
+                            <!-- Squares injected by JS -->
+                        </div>
+                    </div>
+                </div>
+                <div class="heatmap-footer">
+
+                    <div class="heatmap-legend">
+                        <span>Less</span>
+                        <div class="legend-square level-0"></div>
+                        <div class="legend-square level-1"></div>
+                        <div class="legend-square level-2"></div>
+                        <div class="legend-square level-3"></div>
+                        <div class="legend-square level-4"></div>
+                        <span>More</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, game } from './src/js/api.js';
+
+        if (!auth.isAuthenticated()) {
+            window.location.href = 'auth.html';
+        }
+
+        window.handleLogout = () => {
+            auth.logout();
+            window.location.href = 'index.html';
+        };
+
+        function formatTime(seconds) {
+            if (!seconds) return '0s';
+            if (seconds < 60) return `${Math.floor(seconds)}s`;
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            if (h > 0) return `${h}h ${m}m`;
+            return `${m}m`;
+        }
+
+        function renderHeatmap(activityData) {
+            const container = document.getElementById('heatmap-grid');
+            container.innerHTML = '';
+
+            const today = new Date();
+            // Go back 365 days (~52 weeks) 
+            const startDate = new Date();
+            startDate.setDate(today.getDate() - 365);
+
+            // Adjust start date to the previous Sunday to align grid
+            while (startDate.getDay() !== 0) {
+                startDate.setDate(startDate.getDate() - 1);
+            }
+
+            let totalTests = 0;
+            let currentDate = new Date(startDate);
+            const weeks = [];
+
+            // Generate 53 columns (weeks) x 7 rows (days)
+            // Actually we render by columns (weeks)
+
+            // Loop for 53 weeks
+            for (let w = 0; w < 53; w++) {
+                const weekDiv = document.createElement('div');
+                weekDiv.className = 'heatmap-week';
+
+                for (let d = 0; d < 7; d++) {
+                    const dateStr = currentDate.toISOString().split('T')[0];
+                    const count = activityData[dateStr] || 0;
+                    totalTests += count;
+
+                    const square = document.createElement('div');
+                    square.className = 'heatmap-square';
+
+                    // Assign Level (0-4)
+                    let level = 0;
+                    if (count > 0) level = 1;
+                    if (count >= 3) level = 2;
+                    if (count >= 6) level = 3;
+                    if (count >= 10) level = 4;
+
+                    square.classList.add(`level-${level}`);
+                    square.title = `${count} tests on ${currentDate.toDateString()}`;
+
+                    weekDiv.appendChild(square);
+
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+                container.appendChild(weekDiv);
+            }
+
+            // Update Total Text
+            document.getElementById('heatmap-total-tests').textContent = `${totalTests} tests in the last year`;
+        }
+
+        async function loadProfile() {
+            const data = await game.getProfile();
+            if (!data) return;
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('profile-content').style.display = 'grid';
+
+            // User Info
+            document.getElementById('username-display').textContent = data.user.username;
+            const date = new Date(data.user.createdAt || Date.now());
+            document.getElementById('join-date').textContent = date.toLocaleDateString();
+
+            // Global Stats
+            if (data.user.stats) {
+                document.getElementById('total-games').textContent = data.user.stats.gamesPlayed;
+                document.getElementById('total-score').textContent = data.user.stats.totalScore.toLocaleString();
+                document.getElementById('total-time').textContent = formatTime(data.user.stats.totalTimePlayed);
+            }
+
+            // Render Heatmap
+            renderHeatmap(data.activity || {});
+
+            // Populate Data
+            if (data.stats) {
+                // Clear all grids first
+                ['attuned', 'ascended', 'radiant'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = '';
+                });
+
+                for (const [diff, timeStats] of Object.entries(data.stats)) {
+                    console.log(`[Profile] Processing difficulty: '${diff}'`, timeStats);
+                    // diff is 'attuned', 'ascended', 'radiant', or 'normal'
+                    const containerId = diff.toLowerCase().trim(); // ensuring no whitespace
+                    const container = document.getElementById(containerId);
+
+                    console.log(`[Profile] Looking for container #${containerId}:`, container);
+
+                    if (!container) {
+                        console.warn(`[Profile] No container found for difficulty: ${diff} (ID: #${containerId})`);
+                        // continue; // Commenting out continue to check if we can force it or inspect why
+                    }
+                    if (container) {
+                        // Sort keys to have order like 5, 10, 30, 60... then 0 ("No Limit")
+                        const sortedTimes = Object.keys(timeStats).sort((a, b) => {
+                            if (a === '0') return 1; // Put 'No Limit' last
+                            if (b === '0') return -1;
+                            return Number(a) - Number(b);
+                        });
+
+                        for (const time of sortedTimes) {
+                            const stats = timeStats[time];
+                            const timeLabel = time === '0' ? 'No Limit' : `${time}s`;
+
+                            container.innerHTML += `
+                                <div class="mode-card">
+                                    <h3>${timeLabel}</h3>
+                                    <div class="mode-stat">
+                                        <span class="s-label">High Score</span>
+                                        <span class="s-value">${stats.highScore.toLocaleString()}</span>
+                                    </div>
+                                    <div class="mode-stat">
+                                        <span class="s-label">Games Played</span>
+                                        <span class="s-value">${stats.games}</span>
+                                    </div>
+                                    <div class="mode-stat">
+                                        <span class="s-label">Total Time</span>
+                                        <span class="s-value">${formatTime(stats.totalTime)}</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+            }
+        }
+
+        loadProfile();
+    </script>
+</body>
+
+</html>
