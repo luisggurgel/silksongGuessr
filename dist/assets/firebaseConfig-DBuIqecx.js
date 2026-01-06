@@ -1,0 +1,1 @@
+const e={apiKey:void 0,authDomain:"hollowguessrbackend.firebaseapp.com",databaseURL:"https://hollowguessrbackend-default-rtdb.firebaseio.com",projectId:"hollowguessrbackend",storageBucket:"hollowguessrbackend.firebasestorage.app",messagingSenderId:"468117202388",appId:"1:468117202388:web:1ad209b0fe18dbc9692241"};export{e as f};

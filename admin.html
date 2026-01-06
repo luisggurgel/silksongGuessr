@@ -106,16 +106,8 @@
         </div>
     </div>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBZhZ5ONdvvGS0FbOC-BhmTWZgp0d8bqWc",
-            authDomain: "hollowguessrbackend.firebaseapp.com",
-            databaseURL: "https://hollowguessrbackend-default-rtdb.firebaseio.com",
-            projectId: "hollowguessrbackend",
-            storageBucket: "hollowguessrbackend.firebasestorage.app",
-            messagingSenderId: "468117202388",
-            appId: "1:468117202388:web:1ad209b0fe18dbc9692241"
-        };
+    <script type="module">
+        import { firebaseConfig } from './src/js/firebaseConfig.js';
         firebase.initializeApp(firebaseConfig);
 
         const auth = firebase.auth();

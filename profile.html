@@ -193,79 +193,94 @@
         }
 
         async function loadProfile() {
-            const data = await game.getProfile();
-            if (!data) return;
+            try {
+                const data = await game.getProfile();
+                if (!data) throw new Error("No data received");
 
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('profile-content').style.display = 'grid';
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('profile-content').style.display = 'grid';
 
-            // User Info
-            document.getElementById('username-display').textContent = data.user.username;
-            const date = new Date(data.user.createdAt || Date.now());
-            document.getElementById('join-date').textContent = date.toLocaleDateString();
+                // User Info
+                if (data.user) {
+                    document.getElementById('username-display').textContent = data.user.username;
+                    const date = new Date(data.user.createdAt || Date.now());
+                    document.getElementById('join-date').textContent = date.toLocaleDateString();
 
-            // Global Stats
-            if (data.user.stats) {
-                document.getElementById('total-games').textContent = data.user.stats.gamesPlayed;
-                document.getElementById('total-score').textContent = data.user.stats.totalScore.toLocaleString();
-                document.getElementById('total-time').textContent = formatTime(data.user.stats.totalTimePlayed);
-            }
-
-            // Render Heatmap
-            renderHeatmap(data.activity || {});
-
-            // Populate Data
-            if (data.stats) {
-                // Clear all grids first
-                ['attuned', 'ascended', 'radiant'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.innerHTML = '';
-                });
-
-                for (const [diff, timeStats] of Object.entries(data.stats)) {
-                    console.log(`[Profile] Processing difficulty: '${diff}'`, timeStats);
-                    // diff is 'attuned', 'ascended', 'radiant', or 'normal'
-                    const containerId = diff.toLowerCase().trim(); // ensuring no whitespace
-                    const container = document.getElementById(containerId);
-
-                    console.log(`[Profile] Looking for container #${containerId}:`, container);
-
-                    if (!container) {
-                        console.warn(`[Profile] No container found for difficulty: ${diff} (ID: #${containerId})`);
-                        // continue; // Commenting out continue to check if we can force it or inspect why
+                    // Global Stats
+                    if (data.user.stats) {
+                        document.getElementById('total-games').textContent = data.user.stats.gamesPlayed;
+                        document.getElementById('total-score').textContent = data.user.stats.totalScore.toLocaleString();
+                        document.getElementById('total-time').textContent = formatTime(data.user.stats.totalTimePlayed);
                     }
-                    if (container) {
-                        // Sort keys to have order like 5, 10, 30, 60... then 0 ("No Limit")
-                        const sortedTimes = Object.keys(timeStats).sort((a, b) => {
-                            if (a === '0') return 1; // Put 'No Limit' last
-                            if (b === '0') return -1;
-                            return Number(a) - Number(b);
-                        });
+                }
 
-                        for (const time of sortedTimes) {
-                            const stats = timeStats[time];
-                            const timeLabel = time === '0' ? 'No Limit' : `${time}s`;
+                // Render Heatmap
+                renderHeatmap(data.activity || {});
 
-                            container.innerHTML += `
-                                <div class="mode-card">
-                                    <h3>${timeLabel}</h3>
-                                    <div class="mode-stat">
-                                        <span class="s-label">High Score</span>
-                                        <span class="s-value">${stats.highScore.toLocaleString()}</span>
+                // Populate Data
+                if (data.stats) {
+                    // Clear all grids first
+                    ['attuned', 'ascended', 'radiant'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.innerHTML = '';
+                    });
+
+                    for (const [diff, timeStats] of Object.entries(data.stats)) {
+                        console.log(`[Profile] Processing difficulty: '${diff}'`, timeStats);
+                        // diff is 'attuned', 'ascended', 'radiant', or 'normal'
+                        const containerId = diff.toLowerCase().trim(); // ensuring no whitespace
+                        const container = document.getElementById(containerId);
+
+                        console.log(`[Profile] Looking for container #${containerId}:`, container);
+
+                        if (!container) {
+                            console.warn(`[Profile] No container found for difficulty: ${diff} (ID: #${containerId})`);
+                            // continue; // Commenting out continue to check if we can force it or inspect why
+                        }
+                        if (container) {
+                            // Sort keys to have order like 5, 10, 30, 60... then 0 ("No Limit")
+                            const sortedTimes = Object.keys(timeStats).sort((a, b) => {
+                                if (a === '0') return 1; // Put 'No Limit' last
+                                if (b === '0') return -1;
+                                return Number(a) - Number(b);
+                            });
+
+                            for (const time of sortedTimes) {
+                                const stats = timeStats[time];
+                                const timeLabel = time === '0' ? 'No Limit' : `${time}s`;
+
+                                container.innerHTML += `
+                                    <div class="mode-card">
+                                        <h3>${timeLabel}</h3>
+                                        <div class="mode-stat">
+                                            <span class="s-label">High Score</span>
+                                            <span class="s-value">${stats.highScore.toLocaleString()}</span>
+                                        </div>
+                                        <div class="mode-stat">
+                                            <span class="s-label">Games Played</span>
+                                            <span class="s-value">${stats.games}</span>
+                                        </div>
+                                        <div class="mode-stat">
+                                            <span class="s-label">Total Time</span>
+                                            <span class="s-value">${formatTime(stats.totalTime)}</span>
+                                        </div>
                                     </div>
-                                    <div class="mode-stat">
-                                        <span class="s-label">Games Played</span>
-                                        <span class="s-value">${stats.games}</span>
-                                    </div>
-                                    <div class="mode-stat">
-                                        <span class="s-label">Total Time</span>
-                                        <span class="s-value">${formatTime(stats.totalTime)}</span>
-                                    </div>
-                                </div>
-                            `;
+                                `;
+                            }
                         }
                     }
                 }
+            } catch (err) {
+                console.error("Failed to load profile", err);
+                const loadingDiv = document.getElementById('loading');
+                loadingDiv.innerHTML = `
+                    <div style="text-align: center;">
+                        <h2 style="color: #ff6b6b;">Failed to load profile</h2>
+                        <p>${err.message || "Connection error"}</p>
+                        <br>
+                        <button class="hk-button" onclick="handleLogout()">Logout / Retry</button>
+                    </div>
+                `;
             }
         }
 
