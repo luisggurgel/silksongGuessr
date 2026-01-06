@@ -1,6 +1,6 @@
 @font-face {
 	font-family: 'Trajan Pro Bold';
-	font-display: swap;
+	font-display: block;
 	font-style: normal;
 	font-weight: normal;
 	src: local('Trajan Pro Bold'), url('TrajanPro-Bold.woff') format('woff');
@@ -31,14 +31,14 @@ img {
 }
 
 #scoreContainer {
- 	font-size: 2rem;
- 	color: #fff;
- 	position: absolute;
- 	top: 0.5rem;
- 	left: 50%;
- 	transform: translateX(-50%);
- 	display: flex;
- 	align-items: center;
+	font-size: 2rem;
+	color: #fff;
+	position: absolute;
+	top: 0.5rem;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: center;
 }
 
 /* Separate container for the back button so it can sit above the modal overlay */
@@ -63,7 +63,7 @@ img {
 #back-button:hover {
 	background-color: #fff;
 	color: #000;
-	box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
 	transform: translateY(-1px);
 }
 
@@ -86,16 +86,20 @@ img {
 	top: 0;
 	width: 100%;
 	height: 100%;
-	background: rgba(0,0,0,0.4);
+	background: rgba(0, 0, 0, 0.4);
 	display: none;
 }
-.modal-overlay.visible { display:block; }
+
+.modal-overlay.visible {
+	display: block;
+}
 
 /* Improve visible focus state for keyboard users inside modals */
 .window :focus {
-	outline: 2px solid rgba(255,255,255,0.9);
+	outline: 2px solid rgba(255, 255, 255, 0.9);
 	outline-offset: 2px;
 }
+
 .option {
 	display: flex;
 	justify-content: space-between;
@@ -105,7 +109,8 @@ img {
 }
 
 
-#loadingText, #mapLoadingText  {
+#loadingText,
+#mapLoadingText {
 	position: fixed;
 	top: 50%;
 	left: 50%;
@@ -118,20 +123,24 @@ img {
 
 #mapCanvas {
 	width: 100%;
-	flex-grow: 1; /* Allow canvas to fill available vertical space */
-	min-height: 0; /* Prevents flexbox overflow issues */
+	flex-grow: 1;
+	/* Allow canvas to fill available vertical space */
+	min-height: 0;
+	/* Prevents flexbox overflow issues */
 	touch-action: none;
 	pointer-events: unset;
 	transition: all 0.5s ease;
 }
 
 #controlsContainer {
-	height: 60px; /* Give the container a fixed height */
+	height: 60px;
+	/* Give the container a fixed height */
 	display: flex;
 	width: 100%;
 	align-items: center;
 	gap: 0.5rem;
-	padding: 0 65px 0 0.5rem; /* Add padding on the right for the minimise button */
+	padding: 0 65px 0 0.5rem;
+	/* Add padding on the right for the minimise button */
 }
 
 #iconButtons {
@@ -144,7 +153,7 @@ img {
 	gap: 1rem;
 	padding: 0;
 	font-size: 1.5rem;
-	text-align: center;	
+	text-align: center;
 	align-items: center;
 }
 
@@ -157,7 +166,7 @@ button {
 	padding: 0.5rem 1rem;
 	cursor: pointer;
 	transition: all 0.1s ease-in-out;
-	max-height: 50px; 
+	max-height: 50px;
 	text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
 }
 
@@ -166,7 +175,7 @@ button:hover {
 	color: #000000;
 }
 
-button:hover > img {
+button:hover>img {
 	filter: invert(1);
 }
 
@@ -217,7 +226,7 @@ button[disabled] {
 	.option {
 		flex-direction: column;
 		align-items: flex-start;
-		font-size: 1rem; 
+		font-size: 1rem;
 	}
 }
 
@@ -238,7 +247,8 @@ input[type='email'] {
 	color: #fff;
 	padding: 8px 12px;
 	border: 2px solid #818181;
-	font-size: 1rem; /* Explicitly set a readable font size */
+	font-size: 1rem;
+	/* Explicitly set a readable font size */
 	border-radius: 4px;
 }
 
@@ -270,7 +280,7 @@ input[type='checkbox'] {
 	width: 22px;
 	height: 22px;
 	margin-right: 10px;
-	border: 2px solid rgba(255,255,255,0.95);
+	border: 2px solid rgba(255, 255, 255, 0.95);
 	border-radius: 6px;
 	background-color: transparent;
 	display: inline-block;
@@ -560,7 +570,8 @@ label {
 
 
 #guessButton {
-	flex-grow: 1; /* Allow guess button to fill space */
+	flex-grow: 1;
+	/* Allow guess button to fill space */
 }
 
 .spoiler {
@@ -592,27 +603,32 @@ label {
 	flex-grow: 0;
 	text-transform: uppercase;
 	letter-spacing: 3px;
-	display: inline-flex; /* Allow button to size to its content */
-	justify-content: center; /* Keep text centered */
-	padding: 10px 60px; /* Add horizontal padding for arrow spacing */
+	display: inline-flex;
+	/* Allow button to size to its content */
+	justify-content: center;
+	/* Keep text centered */
+	padding: 10px 60px;
+	/* Add horizontal padding for arrow spacing */
 	background: transparent;
 	border: none;
 	color: rgba(255, 255, 255, 0.7);
 	position: relative;
-    cursor: pointer;
-    text-decoration: none;
+	cursor: pointer;
+	text-decoration: none;
 }
 
 .hk-button:hover {
 	color: #fff;
 	text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
-	background-color: transparent; /* Override the global button hover style */
+	background-color: transparent;
+	/* Override the global button hover style */
 }
 
 /* Hollow Knight-style selection cursors */
 .hk-button::before,
 .hk-button::after {
-	content: ''; /* Use empty content for background images */
+	content: '';
+	/* Use empty content for background images */
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
@@ -627,31 +643,55 @@ label {
 
 .hk-button::before {
 	background-image: url('/images/leftArrow.png');
-	left: 25px; /* Position arrow in the padding area */
-	transform: translateY(-60%) translateX(-10px) scale(0.75); /* Start off-screen */
+	left: 25px;
+	/* Position arrow in the padding area */
+	transform: translateY(-60%) translateX(-10px) scale(0.75);
+	/* Start off-screen */
 }
 
 .hk-button::after {
 	background-image: url('/images/rightArrow.png');
-	right: 25px; /* Position arrow in the padding area */
-	transform: translateY(-60%) translateX(10px) scale(0.75); /* Start off-screen */
+	right: 25px;
+	/* Position arrow in the padding area */
+	transform: translateY(-60%) translateX(10px) scale(0.75);
+	/* Start off-screen */
 }
 
 .hk-button:hover::before,
 .hk-button:hover::after {
 	opacity: 1;
-	transform: translateY(-60%) translateX(0px) scale(1.35); /* Animate to final position */
+	transform: translateY(-60%) translateX(0px) scale(1.35);
+	/* Animate to final position */
 }
 
 .hk-button:focus {
 	outline: none;
 }
 
+/* Compact button for small menus (like profile dropdown) */
+.hk-button.compact {
+	padding: 8px 36px;
+	font-size: 0.85rem;
+	width: 100%;
+	/* Fill the container */
+	min-width: fit-content;
+}
+
+.hk-button.compact::before {
+	left: 6px;
+	/* Move arrow closer to edge */
+}
+
+.hk-button.compact::after {
+	right: 6px;
+	/* Move arrow closer to edge */
+}
+
 /* Centers buttons inside it */
 .button-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 /* Toast container styles */
@@ -660,10 +700,12 @@ label {
 	bottom: 1rem;
 	right: 1rem;
 	display: flex;
-	flex-direction: column-reverse; /* New toasts appear above old ones */
+	flex-direction: column-reverse;
+	/* New toasts appear above old ones */
 	gap: 0.5rem;
 	z-index: 9999;
-	pointer-events: none; /* Allow clicks to pass through the container */
+	pointer-events: none;
+	/* Allow clicks to pass through the container */
 }
 
 /* Individual toast styles */
@@ -677,7 +719,8 @@ label {
 	font-size: 14px;
 	opacity: 0;
 	transition: opacity 350ms ease-in-out;
-	pointer-events: auto; /* Toasts themselves can be interactive if needed later */
+	pointer-events: auto;
+	/* Toasts themselves can be interactive if needed later */
 	max-width: 350px;
 	width: 350px;
 }
@@ -690,7 +733,7 @@ label {
 	align-items: center;
 	justify-content: center;
 	z-index: 2000;
-	background-color: rgba(0,0,0,0.7);
+	background-color: rgba(0, 0, 0, 0.7);
 }
 
 .dialog-content {
@@ -698,7 +741,7 @@ label {
 	padding: 2rem;
 	border-radius: 8px;
 	border: 2px solid rgba(255, 255, 255, 0.5);
-	box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+	box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 	text-align: center;
 	max-width: 28rem;
 }

@@ -5,6 +5,7 @@
 	<meta charset="UTF-8" />
 	<link rel="stylesheet" href="src/styles/index.css" />
 	<link rel="stylesheet" href="src/styles/style.css" />
+	<link rel="preload" href="src/styles/TrajanPro-Bold.woff" as="font" type="font/woff" crossorigin>
 	<!--SEO Junk-->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<link rel="shortcut icon" href="/assets/icons/favicon.png" type="image/x-icon" />
@@ -69,7 +70,7 @@
 
 		<!-- Dropdown Menu -->
 		<div id="profile-dropdown"
-			style="display: none; position: absolute; top: 50px; right: 0; background: rgba(0, 0, 0, 0.9); border: 1px solid #fff; border-radius: 8px; width: 150px; padding: 10px; flex-direction: column; gap: 10px;">
+			style="display: none; position: absolute; top: 50px; right: 0; background: rgba(0, 0, 0, 0.9); border: 1px solid #fff; border-radius: 8px; width: max-content; padding: 10px; flex-direction: column; gap: 10px;">
 			<!-- Injected by JS based on auth state -->
 		</div>
 	</div>
@@ -127,8 +128,8 @@
 		} else {
 			// Render Unauthenticated Menu
 			dropdown.innerHTML = `
-				<a href="auth.html" class="hk-button" style="font-size: 0.9rem; padding: 5px; display: block; text-align: center;">Login</a>
-				<a href="auth.html?mode=register" class="hk-button" style="font-size: 0.9rem; padding: 5px; display: block; text-align: center; margin-top: 5px;">Register</a>
+				<a href="auth.html" class="hk-button compact" style="text-align: center;">Login</a>
+				<a href="auth.html?mode=register" class="hk-button compact" style="text-align: center; margin-top: 5px;">Register</a>
 			`;
 		}
 	</script>

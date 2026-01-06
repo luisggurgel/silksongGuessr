@@ -1,44 +1,82 @@
-![Logo](readme/logo.png)
-
 # Silksong Guessr
 
-Silksong Guessr is an open-source GeoGuessr-style web game set in the worlds of Hollow Knight and Silksong.
+**Silksong Guessr** is a web-based GeoGuessing game set in the world of *Hollow Knight* and its anticipated sequel, *Silksong*. Players must identify locations within the game world based on visual cues.
 
-This game is built with vanilla HTML, JS, and CSS using Vite for a fast and lightweight experience.
+> **Note:** This project heavily inspired by "Hollow Guessr" and was developed as a technical assignment for the Computer Science Technical Course at **IFCE (Instituto Federal de Educação, Ciência e Tecnologia do Ceará)**.
 
-## Core Features:
-### Multiple Image Packs
-Includes **Hallownest** and **Pharloom** along with other user-submitted packs. Test your knowledge of different areas!
+## Features
 
-### Challenge Modes
-Enable features like **Blur Mode**, **Time Limits**, and **Difficulty Filters** to tailor your experience and increase the challenge.
+-   **Interactive Map:** Guess locations on a detailed map of Hallownest.
+-   **User Accounts:** Register, login, and track your progress.
+-   **Google Login:** Seamless authentication using Google.
+-   **Profile Statistics:** View your game history, high scores, and activity heatmap.
+-   **Responsive Design:** optimized for both desktop and mobile devices.
 
-## Local Setup
-To set up Silksong Guessr locally, follow these steps:
+## Project Structure
 
-1. Clone or download the repository.
+The project is divided into two main parts:
 
-2. Navigate to the project directory:
-```bash
-cd silksongGuessr
+-   **Frontend:** Built with HTML, CSS (Vanilla), and JavaScript. It uses **Vite** as the build tool and development server.
+-   **Backend:** A **Node.js** and **Express** API that handles authentication, game results, and user profiles.
+-   **Database:** **MongoDB** is used to store user data and game records.
+
+## How to Run Locally
+
+### Prerequisites
+
+-   Node.js (v14+ recommended)
+-   MongoDB (installed and running locally or via Docker)
+
+### Installation
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/luisggurgel/silksongGuessr.git
+    cd silksongGuessr
+    ```
+
+2.  Install dependencies for both frontend and backend:
+    ```bash
+    npm install
+    cd backend
+    npm install
+    cd ..
+    ```
+
+### Running the Application
+
+This project uses a unified startup script to launch the Database, Backend API, and Frontend Server simultaneously.
+
+**Windows (PowerShell):**
+```powershell
+./start.ps1
 ```
 
-3. Install the dependencies:
+**Alternative (npm):**
 ```bash
-npm install
+npm run start
 ```
 
-4. Start the development server:
-```bash
-npm run dev
-```
+*Note: The application expects MongoDB to be available. The `start.ps1` script attempts to start a local MongoDB instance using the `tools/start_db.ps1` helper.*
 
-5. Open your web browser to the local URL provided (usually `http://localhost:5173`).
+### Configuration Required
+The startup script `tools/start_db.ps1` contains a hardcoded path to the MongoDB executable. **You must verify and update this path to match your local installation before running.**
 
-## Credits
-- **Hollow Knight & Silksong**: Created by Team Cherry. All game assets belong to them.
-- **Community Contributors**: Screenshots and locations provided by the dedicated fan community.
-- **[GeoGuessr](https://www.geoguessr.com/)**: The inspiration for the gameplay mechanics.
+1.  Open `tools/start_db.ps1`.
+2.  Update the `$mongodPath` variable:
+    ```powershell
+    $mongodPath = "C:\Path\To\Your\MongoDB\bin\mongod.exe"
+    ```
 
-## Support
-If you enjoy the game, consider supporting **Team Cherry** by purchasing their games!
+### Accessing the App
+
+-   **Frontend:** `http://localhost:5173`
+-   **Backend API:** `http://localhost:5001`
+
+## Academic Context
+
+This project was developed by **Luis Guilherme** as part of the curriculum at **IFCE** for the Web Development 1 course, taught by Professor **José Roberto Bezerra**.
+
+## License
+
+This project is for educational purposes. *Hollow Knight* and *Silksong* are properties of Team Cherry.

@@ -213,5 +213,8 @@ body {
 
 /* Shift button container slightly left to center with logo visually */
 .button-container {
-    transform: translateX(-12px);
+    /* transform: translateX(-12px); Removed to avoid conflict with fadeIn animation */
+    /* margin-left: -12px; Removed as it caused layout issues */
+    position: relative;
+    left: -16px;
 }

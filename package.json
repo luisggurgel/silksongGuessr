@@ -4,7 +4,8 @@
   "description": "Hollow Guessr is an open-source GeoGuessr web game set in the worlds of Hollow Knight and Silksong.",
   "scripts": {
     "dev": "vite",
-    "dev:all": "concurrently \"npm run server --prefix backend\" \"npm run dev\"",
+    "db": "powershell ./tools/start_db.ps1",
+    "start": "concurrently -n \"DB,API,WEB\" -c \"bgBlue.bold,bgMagenta.bold,bgGreen.bold\" \"npm run db\" \"npm run server --prefix backend\" \"npm run dev\"",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -28,6 +29,7 @@
     "esbuild": "^0.25.12",
     "fdir": "^6.5.0",
     "jimp": "^0.16.1",
+    "mongoose": "^9.1.1",
     "nanoid": "^3.3.11",
     "picocolors": "^1.1.1",
     "picomatch": "^4.0.3",
